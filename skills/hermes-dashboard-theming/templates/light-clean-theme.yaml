@@ -1,0 +1,98 @@
+# Template: light, clean dashboard theme — white canvas, color only on
+# text and buttons.
+# Copy to <HERMES_HOME>/dashboard-themes/<name>.yaml, then:
+#   hermes config set dashboard.theme <name>
+# To revert:
+#   hermes config set dashboard.theme default
+#
+# Things to change when copying:
+#  * <name> must not be a built-in preset (default, default-large, mono, slate, cyberpunk,
+#    nous, nous-blue, midnight, ember, rose) — the built-in one wins otherwise.
+#  * One file per variant. EXACTLY THREE VALUES MAY BE CHANGED: midground (text),
+#    primary + ring (buttons) plus the selection color in ::selection. Set all three to THE SAME
+#    dark step of the same hue and check contrast against #FFFFFF for >= 4.5.
+#  * Label with a family prefix ("Clear · Petrol") so the variants appear grouped in the picker.
+# The menu list only appears after a full page load (on mobile: close the tab and
+# reopen it, or use a private tab — there is no hard reload there).
+
+name: example-light
+label: Clear · Example
+description: White surface, colored text and colored buttons
+
+palette:
+  # Canvas: pure white, neutral. No tinted surfaces — explicit user requirement.
+  background: "#FFFFFF"
+  # Text: this is where the hue sits (dark step, >= 4.5 against white).
+  # midground is both the text AND the primary fill of the dashboard.
+  midground: "#0F766E"
+  foreground:
+    hex: "#FFFFFF"
+    alpha: 0
+  # No color glow on the surface; the canvas stays white
+  warmGlow: "rgba(16, 24, 40, 0.02)"
+  # The "retro" film-grain effect off
+  noiseOpacity: 0
+
+typography:
+  fontSans: 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+  fontMono: 'ui-monospace, "Cascadia Mono", "SF Mono", Menlo, Consolas, monospace'
+  baseSize: "15px"
+  lineHeight: "1.55"
+  letterSpacing: "-0.005em"
+
+layout:
+  # Cascades to --radius-sm/md/lg/xl and reaches buttons, inputs, token cards
+  radius: "1rem"
+  density: comfortable
+
+# Surfaces and borders stay NEUTRAL so the background stays white; color only on
+# text (midground) and buttons (primary/ring).
+colorOverrides:
+  card: "#FFFFFF"
+  cardForeground: "#0F766E"       # <- text color (like midground)
+  popover: "#FFFFFF"
+  popoverForeground: "#0F766E"
+  primary: "#0F766E"              # <- button color, same step as the text
+  primaryForeground: "#FFFFFF"
+  secondary: "#F3F5F7"            # neutral
+  secondaryForeground: "#0F766E"
+  muted: "#F3F5F7"
+  mutedForeground: "#5C7570"      # desaturated step of the same hue
+  accent: "#F3F5F7"
+  accentForeground: "#0F766E"
+  border: "#E5E7EB"
+  input: "#E5E7EB"
+  ring: "#0F766E"
+  destructive: "#C0392B"
+  destructiveForeground: "#FFFFFF"
+  success: "#15803D"
+  warning: "#0F766E"
+
+# Surfaces instead of hard edges: soft, low shadows
+componentStyles:
+  card:
+    boxShadow: "0 1px 2px rgba(16, 24, 40, 0.05), 0 10px 28px -18px rgba(16, 24, 40, 0.18)"
+  header:
+    background: "#FFFFFF"
+  sidebar:
+    background: "#FFFFFF"
+  badge:
+    borderRadius: "999px"
+
+customCSS: |
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  /* Carry over hard-wired corners — without this rule, cards, chips and dialogs
+     stay square on the skills, plugins and config pages (the "brutalist" look). */
+  [class~="rounded-none"] {
+    border-radius: var(--radius-md) !important;
+  }
+  ::selection {
+    background: rgba(13, 148, 136, 0.14);
+  }
+  * {
+    scrollbar-color: #C9CFD8 #FFFFFF;
+  }
