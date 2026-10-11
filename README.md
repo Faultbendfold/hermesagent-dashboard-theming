@@ -13,6 +13,8 @@ Three things live in this repository:
 
 ## The theme
 
+![Dashboard](screenshots/dashboard-models.png)
+
 ![Theme picker](screenshots/theme-picker.png)
 
 Light canvas, white cards, one modern sans-serif (Inter), rounded corners everywhere, and colour
@@ -20,6 +22,8 @@ used only as an accent — buttons, badges and status marks. The noise/grain ove
 stock themes look retro is switched off.
 
 ![UI detail](screenshots/ui-detail.png)
+
+![Skills page](screenshots/dashboard-skills.png)
 
 **Install**
 
@@ -41,7 +45,7 @@ Install it as a **skill tap** — a plain GitHub repository of `SKILL.md` files,
 server:
 
 ```bash
-hermes skills tap add atzen1991/hermes-dashboard-theming
+hermes skills tap add Faultbendfold/hermesagent-dashboard-theming
 ```
 
 Or copy the directory into your own skill tree:

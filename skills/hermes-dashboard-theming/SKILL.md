@@ -2,7 +2,7 @@
 name: hermes-dashboard-theming
 description: "Reskin the Hermes web dashboard with YAML themes."
 version: 1.0.0
-author: atzen1991, Hermes Agent
+author: Faultbendfold, Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
