@@ -1,3 +1,8 @@
+> **Note: this repository was created with the help of AI.**
+> The theme, the skill and the tooling were built in a collaboration between a human author
+> (direction, design decisions, review) and **Hermes Agent** (implementation, measurements, text).
+> Every claim here was checked against a running dashboard, but read the code before you rely on it.
+
 # hermes-dashboard-theming
 
 A light, clean, rounded theme for the **Hermes web dashboard** — plus the skill and the tooling

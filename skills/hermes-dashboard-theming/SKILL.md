@@ -13,6 +13,9 @@ metadata:
 
 # Restyle the Hermes dashboard (themes)
 
+> Created with the help of AI (Hermes Agent) and reviewed by a human author. Every recipe and
+> measurement in here was verified against a running dashboard; re-check anything that matters to you.
+
 ## When to Use
 
 - The web dashboard looks ugly, retro or pixelated and a different look is wanted.
