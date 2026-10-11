@@ -217,6 +217,47 @@ surface is light and calm.
 - Additionally independent of the theme: `dashboard.font` (font override, also settable in the
   picker)
 
+## Sharing it (repo, tap, publishing)
+
+Publish a theme and this skill as a **skill tap** — a plain GitHub repository, no registry, no
+server. Layout that `hermes skills tap add <owner/repo>` expects:
+
+```text
+owner/repo
+├── skills/                      # the tap's default path
+│   └── hermes-dashboard-theming/
+│       ├── SKILL.md             # required
+│       ├── references/          # optional supporting files
+│       ├── templates/
+│       └── scripts/
+├── themes/<name>.yaml           # theme to copy (convention, not required)
+└── README.md, LICENSE
+```
+
+A sequence that works: `git init -b main`, set the committer to
+`<handle>@users.noreply.github.com` (the default identity writes the machine name into the history),
+commit, then push. Never put the token in the remote URL — it ends up in `.git/config` and in error
+messages. Use a helper instead:
+
+```bash
+git config credential.helper '!f() { echo username=x-access-token; echo password=$GITHUB_TOKEN; }; f'
+```
+
+**Check before the first push:** no `umbrel`/instance paths/machine name, no personal framing, no
+credentials in the tree (`grep -rn -i -E "ghp_|sk-|<hostname>" .`), and no screenshots carrying real
+usage data (model names, cost, session counts) — use tight crops or redact them.
+
+**Permissions trap:** a fine-grained token without `administration=write` /
+`repository_creation=write` cannot create a repository (`Resource not accessible by personal access
+token`), and without `Contents: Read and write` on that exact repository it cannot push either. In
+that case the user creates the empty repository (no README/.gitignore/licence — an auto-commit
+collides with the first push) and grants the token access; after that the push is one command.
+
+**Verify, do not assume:** `git/trees/main?recursive=1` counts the files,
+`raw.githubusercontent.com` proves public reachability without a token, and
+`hermes skills tap add <owner/repo>` in a throwaway home (`HERMES_HOME=<tmp>`) proves the tap really
+installs.
+
 ## Pitfalls
 
 - Do not mix CLI skins and dashboard themes: `display.skin` + `skins/` theme the terminal,
