@@ -26,8 +26,6 @@ Light canvas, white cards, one modern sans-serif (Inter), rounded corners everyw
 used only as an accent — buttons, badges and status marks. The noise/grain overlay that makes the
 stock themes look retro is switched off.
 
-![UI detail](screenshots/ui-detail.png)
-
 ![Skills page](screenshots/dashboard-skills.png)
 
 **Install**
