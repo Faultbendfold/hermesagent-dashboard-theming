@@ -146,6 +146,15 @@ var VORGABE = [
 ];
 
 var SCHLUESSEL = "farbboard-modelle-v1";
+/* English key names for the generated output; the internal ids stay untouched. */
+var NAMEN = {
+  seite: "page", karte: "card", chip: "chip",
+  txt1: "text1", txt2: "text2", txt3: "text3", txt4: "text4",
+  rand: "border", haar: "hairline",
+  tools: "tools", vision: "vision", reasoning: "reasoning", familie: "model-family",
+  s_input: "input", s_output: "output", s_cache: "cache-read", s_reason: "reasoning-series",
+  ok: "success", warn: "warning", fehl: "danger"
+};
 var speicher = {};                       /* fallback in case localStorage is blocked (file://) */
 function holen(k) { try { var v = localStorage.getItem(k); return v === null ? (speicher[k] || null) : v; }
                     catch (e) { return speicher[k] || null; } }
@@ -372,7 +381,7 @@ function zeichne() {
       f.werte.innerHTML = "on white: " + bewertung(kontrast(hex, "#FFFFFF"), 3) +
         " &nbsp;·&nbsp; bar " + mischen(hex, 70, "#FFFFFF");
     }
-    zeilen.push(id + ": " + hex + (f.text ? " / " + textHex : "") + (f.anteil ? " / " + anteil + "%" : ""));
+    zeilen.push((NAMEN[id] || id) + ": " + hex + (f.text ? " / " + textHex : "") + (f.anteil ? " / " + anteil + "%" : ""));
   });
 
   var aus = [];
