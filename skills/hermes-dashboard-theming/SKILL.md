@@ -220,7 +220,22 @@ surface is light and calm.
 ## Pitfalls
 
 - Do not mix CLI skins and dashboard themes: `display.skin` + `skins/` theme the terminal,
-  `dashboard.theme` + `dashboard-themes/` the web. Two systems, two locations.
+  `dashboard.theme` + `dashboard-themes/` theme the web. Two systems, two locations.
+- **Inline `code` chips and the text selection change color on EVERY click — the app cycles
+  `--selection-bg`.** The bundle registers a `selectstart` listener that advances the variable to the
+  next of **eleven** pastel hues on every selection start (`oklch(85% 0.12 330)` through
+  `oklch(88% 0.10 80)`, once around the color wheel), and
+  `code { background: var(--selection-bg, var(--midground)) }` paints the copyable commands with it
+  (Keys page = `/env`). Reported as "the texts for direct copying have a colored background and the
+  color changes on every click". Freeze it with
+  `:root { --selection-bg: <calm tone> !important; }` (this beats the inline value the script sets)
+  plus `code { background: … !important; color: #111827 !important; }`; `::selection` additionally
+  needs `color: inherit !important`, because the app sets `color: var(--background)` there — near
+  white text on a light tint, i.e. an unreadable selection. Evidence: compare two screenshots taken
+  before and after a **real** click pixel by pixel; a synthetic `dispatchEvent` click does not fire
+  `selectstart` and fakes "no change". The app also dims those commands with `opacity-60`, which
+  leaves roughly 3.5:1 against a light surface; to get more, set `opacity: 1 !important` on `code`
+  (~14:1), at the cost of making secondary text more prominent.
 - **There are no sliders in the dashboard.** `type="range"` and slider components do not occur in
   the source; if a user says "slider", they almost always mean the **scrollbars** or the
   active/inactive marks. Do not guess — ask for a screenshot and have the spot marked.

@@ -80,7 +80,16 @@ customCSS: |
     border: 3px solid transparent;
     background-clip: content-box;
   }
-  ::selection { background: rgba(31, 41, 55, 0.14); }
+  /* The dashboard cycles --selection-bg through eleven pastel oklch hues on
+     EVERY selectstart (i.e. on every click) and paints inline `code` chips with
+     it: `code { background: var(--selection-bg, var(--midground)) }`. That is
+     why copyable commands (Keys page) change color on each click. Freeze the
+     variable and give the chips one calm tone instead.
+     The same variable feeds `::selection`, whose text color is
+     `var(--background)` — near-white on a light tint — so set that too. */
+  :root { --selection-bg: #E6E7EA !important; }
+  code { background: #E6E7EA !important; color: #111827 !important; }
+  ::selection { background: rgba(31, 41, 55, 0.16) !important; color: inherit !important; }
 
   /* Pull headings and the retro fonts hard-wired in the source
      (font-mondwest, font-expanded) onto the theme font — one typeface. */
