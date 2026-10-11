@@ -140,6 +140,35 @@ surface is light and calm.
   state. Structure, measurement recipe and pitfalls: `references/color-board.md`.
 - At the end, ask which variant should be set permanently (`hermes config set dashboard.theme ...`).
 
+## The dark counterpart
+
+A dark theme is **not** the light file with swapped background values. Two roles invert, one does
+not. Derive it deliberately:
+
+- **`midground` is the ink, not a surface.** In the light theme it is near-black (`#111827`) and feeds
+  the borders, the button bezel and `code` chips; in the dark theme it becomes a light tone
+  (`#E6E8EC`). Everything built on `var(--midground)` then follows by itself.
+- **`palette.background` is the canvas:** `#F8F9FB` → `#0F1115`, with the surface steps above it in
+  `colorOverrides.card`/`popover` (`#171A21`) and `componentStyles.sidebar`/`header` (`#141821`).
+- **Primary buttons invert:** dark fill with a light label in the light theme (`primary #1F2937`,
+  `primaryForeground #FFFFFF`), light fill with a dark label in the dark theme (`primary #E6E8EC`,
+  `primaryForeground #111827`). Do not skip this step — the app paints those buttons with
+  `text-background` (the canvas colour), so a dark fill makes the label vanish into it.
+- **Semantic and capability colours: lift the text, keep the surfaces.** The tinted chip fills
+  (`color-mix(<tone> 18%, transparent)`) and borders were sized for a surface and can stay; only the
+  text tones need lightening (`#2C7A57` → `#96CEB4`, `#8A6100` → `#FFCC5C`, `#B02A24` → `#FF8A84`,
+  brown `#4B3832` → `#D3B79B`, violet `#6E5F94` → `#B4A5D6`).
+- **Soften the hairline:** `inset 0 0 0 1px var(--midground)` glares at full brightness on a dark
+  surface — wrap it as `inset 0 0 0 1px color-mix(in srgb, var(--midground) 22%, transparent)`.
+- **Hard-coded light values in the derived CSS** need replacing too: scrollbar `#C7CDD6` → `#3A4150`,
+  `--selection-bg` `#E6E7EA` → `#2A2F3A`, checkbox fill and check mark, focus outline.
+- **Do not "fix" the chat terminal for the light theme.** The app paints its own black panel and the
+  ANSI colours are correct on it; measure the panel, not the canvas
+  (`references/contrast-checking.md`).
+- Publish the pair **side by side and in the phone width**, and report the pixel counts as evidence:
+  about 95 % light pixels for the light theme, about 93 % dark for the dark one. A single leftover
+  surface from the other theme shows up in that number immediately.
+
 ## Procedure
 
 1. Take stock: does `<HERMES_HOME>/dashboard-themes/` exist, and what is in `dashboard.theme`

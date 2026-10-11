@@ -1,0 +1,308 @@
+# Created with the help of AI (Hermes Agent) and reviewed by a human author.
+# Hermes dashboard theme "dark-clean" — the dark counterpart of "light-clean":
+# same rounded, single-typeface, restrained look on a dark canvas.
+# Enable with:  hermes config set dashboard.theme dark-clean
+
+name: dark-clean
+label: Dark Clean
+description: Dark, clean, rounded dashboard theme with a calm palette.
+
+palette:
+  background: "#0F1115"
+  midground: "#E6E8EC"
+  foreground:
+    hex: "#FFFFFF"
+    alpha: 0
+  warmGlow: "rgba(230, 232, 236, 0.03)"
+  noiseOpacity: 0
+
+typography:
+  fontSans: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'
+  fontDisplay: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'
+  fontMono: 'ui-monospace, "SF Mono", Menlo, Consolas, monospace'
+  baseSize: "15px"
+  lineHeight: "1.6"
+  letterSpacing: "-0.011em"
+  fontUrl: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+
+layout:
+  radius: "1rem"
+  density: comfortable
+
+colorOverrides:
+  card: "#171A21"
+  cardForeground: "#E6E8EC"
+  popover: "#1B1F27"
+  popoverForeground: "#E6E8EC"
+  primary: "#E6E8EC"
+  primaryForeground: "#111827"
+  secondary: "#232833"
+  secondaryForeground: "#E6E8EC"
+  muted: "#1B1F27"
+  mutedForeground: "#9BA3AF"
+  accent: "#242A35"
+  accentForeground: "#E6E8EC"
+  destructive: "#FF8A84"
+  destructiveForeground: "#1A0F0E"
+  success: "#96CEB4"
+  warning: "#FFCC5C"
+  border: "#2A2F3A"
+  input: "#2A2F3A"
+  ring: "#5A6270"
+
+# Chart series (usage bars on the models page and in analytics). The sand and
+# gold tones of "light-clean" carry over unchanged — both sit above 7:1 on the
+# dark card surface.
+seriesColors:
+  inputTokenAccent: "#FFE28A"
+  outputTokenAccent: "#D9A441"
+
+componentStyles:
+  card:
+    background: "#171A21"
+    boxShadow: "0 1px 2px rgba(0, 0, 0, 0.45), 0 12px 32px -20px rgba(0, 0, 0, 0.75)"
+  header:
+    background: "#141821"
+  sidebar:
+    background: "#141821"
+
+customCSS: |
+  :root {
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
+  }
+  [class*="rounded-none"] { border-radius: var(--radius-md) !important; }
+  *::-webkit-scrollbar { width: 10px; height: 10px; }
+  *::-webkit-scrollbar-track { background: transparent; }
+  *::-webkit-scrollbar-thumb {
+    background: #3A4150;
+    border-radius: 999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+  /* The dashboard cycles --selection-bg through eleven pastel oklch hues on
+     EVERY selectstart (i.e. on every click) and paints inline `code` chips with
+     it: `code { background: var(--selection-bg, var(--midground)) }`. That is
+     why copyable commands (Keys page) change color on each click. Freeze the
+     variable and give the chips one calm tone instead.
+     The same variable feeds `::selection`, whose text color is
+     `var(--background)` — on a dark theme that is near-black text, which the
+     browser then paints on a dark tint — so set that too. */
+  :root { --selection-bg: #2A2F3A !important; }
+  code { background: #2A2F3A !important; color: #E6E8EC !important; }
+  ::selection { background: rgba(230, 232, 236, 0.18) !important; color: inherit !important; }
+
+  /* Pull headings and the retro fonts hard-wired in the source
+     (font-mondwest, font-expanded) onto the theme font — one typeface. */
+  .font-mondwest, .font-expanded, h1, h2, h3 {
+    font-family: var(--theme-font-sans) !important;
+    letter-spacing: normal !important;
+  }
+
+  /* Tags carry the retro font "Rules Compressed" but keep their
+     wide letter-spacing — only the font family is swapped. */
+  .font-compressed {
+    font-family: var(--theme-font-sans) !important;
+  }
+
+  /* Checkboxes: custom appearance, otherwise the browser ignores the rounding. */
+  input[type="checkbox"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    border: 1.5px solid #3A4150;
+    border-radius: 5px;
+    background: #171A21;
+    display: inline-grid;
+    place-content: center;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  input[type="checkbox"]:checked {
+    background: #E6E8EC;
+    border-color: #E6E8EC;
+  }
+  input[type="checkbox"]:checked::after {
+    content: "";
+    width: 7px;
+    height: 3px;
+    border-left: 2px solid #111827;
+    border-bottom: 2px solid #111827;
+    transform: rotate(-45deg) translateY(-1px);
+  }
+  input[type="checkbox"]:focus-visible {
+    outline: 2px solid #5A6270;
+    outline-offset: 1px;
+  }
+  input[type="radio"] {
+    -webkit-appearance: none;
+    appearance: none;
+    border-radius: 50%;
+  }
+
+  /* Status dots in lists (active/inactive): the app draws them as square spans,
+     they are not form elements. Hence targeting the utility classes here. */
+  span[class*="pointer-events-none"][class*="w-3.5"] {
+    border-radius: 50% !important;
+  }
+
+  /* Tags/chips: the app draws them as spans in the retro font at the full
+     base font size (15px). Smaller here so they read as labels —
+     the letter-spacing is given in em and shrinks along with it. */
+  span[class*="font-compressed"] {
+    border-radius: 999px !important;
+    font-size: 10px !important;
+    line-height: 1.5 !important;
+    padding: 2px 7px !important;
+    letter-spacing: 0.14em !important;
+  }
+
+  /* The arc border stays as in the bundled skins: animated
+     gradient on hover and focus. Only the radius is corrected — the ring
+     is two pixels larger than its button due to inset -2px, so its
+     outer radius must likewise be two pixels larger. Otherwise it does not sit
+     concentric to the rounding. */
+  .arc-border {
+    border-radius: calc(var(--radius-md) + 2px) !important;
+    /* "Fully calm" variant: a single, opaque color tone, no motion.
+       The stroke always sits on the side surface (the ring is 2px larger
+       than its button), so a bright tone is visible on dark as well as light.
+       Animation switched off so that nothing drifts anymore. */
+    --arc-gradient: linear-gradient(var(--arc-angle), var(--midground) 0%, var(--midground) 100%);
+    --arc-duration: 0s;
+    /* 1.6 instead of 1.25 px: a very thin stroke is anti-aliased more
+       strongly on curves than on straight runs and looks paler there. A little more
+       width compensates without making the edge obtrusive. */
+    --arc-width: 1.6px;
+  }
+
+  /* Disable retro inset edges ("bezel"): the app puts
+     two hard inner shadows on many buttons — a dark one at bottom right and a light
+     one at top left. Instead of merely deleting the bezel, it is replaced by a
+     uniform 1px hairline, so light buttons keep a visible edge (their border
+     width is 0px). On the dark canvas a full-brightness line glares, so the
+     hairline is tinted down to 22 percent of the ink color. Inner shadows follow
+     the rounding, so the line sits the same at all corners. Only
+     the variable is set — box-shadow itself is left untouched so that focus
+     rings still appear. */
+  [class*="shadow-[inset"] {
+    --tw-shadow: inset 0 0 0 1px color-mix(in srgb, var(--midground) 22%, transparent) !important;
+  }
+
+  /* Capability and status colors (models page, status dots, notices).
+     The app hard-wires success/warning/danger in the stylesheet — #4ade80,
+     #ffbd38, #fb2c36 — so the theme setting
+     colorOverrides.success has no effect there. Set directly here.
+     Same palette family as "light-clean" (mint #96CEB4, sun yellow #FFCC5C,
+     coral #FF6F69), but inverted for a dark surface: TEXT and dots take the
+     light tone itself (mint on #171A21 measures 9.3:1), the surfaces stay as
+     tints so they read as quiet chips. */
+  [class*="text-success"]:not([class*="text-success-foreground"]) { color: #96CEB4 !important; }
+  [class*="bg-success/"][class*="text-success"],
+  [class*="bg-success/"] [class*="text-success"] { color: #96CEB4 !important; }
+  [class~="bg-success"] { background-color: #2C7A57 !important; }
+  [class*="bg-success/10"], [class*="bg-success/15"] { background-color: color-mix(in srgb, #96CEB4 18%, transparent) !important; }
+  [class*="border-success"] { border-color: color-mix(in srgb, #96CEB4 42%, transparent) !important; }
+
+  [class*="text-warning"]:not([class*="text-warning-foreground"]) { color: #FFCC5C !important; }
+  [class~="bg-warning"] { background-color: #8A6100 !important; }
+  [class*="bg-warning/"]:not([class*="bg-warning-foreground"]) { background-color: color-mix(in srgb, #FFCC5C 18%, transparent) !important; }
+  [class*="border-warning"] { border-color: color-mix(in srgb, #FFCC5C 45%, transparent) !important; }
+
+  [class*="text-destructive"]:not([class*="text-destructive-foreground"]) { color: #FF8A84 !important; }
+  [class~="bg-destructive"] { background-color: #B02A24 !important; }
+  [class*="bg-destructive/"]:not([class*="bg-destructive-foreground"]) { background-color: color-mix(in srgb, #FF6F69 20%, transparent) !important; }
+  [class*="border-destructive"] { border-color: color-mix(in srgb, #FF6F69 45%, transparent) !important; }
+
+  /* Foreign colors of the app: besides the semantic colors, the surface
+     uses the Tailwind default palette in a few places (blue for "Vision",
+     purple for "Reasoning", emerald/orange for usage bars, red and
+     amber for notices in the skill dialog). These do not match the rest of
+     the surface, so they are pulled onto the theme family here. Only the
+     TEXT tones are lifted for the dark canvas — the tinted surfaces and
+     borders of "light-clean" already read correctly on dark:
+       Blue     -> blue-gray   #D3B79B (text) / #854442 (surface)
+       Purple   -> gray-violet #B4A5D6 (text) / #6E5F94 (surface)
+       Emerald  -> mint        #96CEB4 (text) / #5FA98A (surface)
+       Amber    -> sand        #FFCC5C (text) / #D9A441 (surface)
+       Red      -> coral       #FF8A84 (text) / #E8746E (surface) */
+  [class*="text-blue-"] { color: #D3B79B !important; }
+  [class*="bg-blue-500/"] { background-color: color-mix(in srgb, #854442 54%, transparent) !important; }
+  [class*="border-blue-"] { border-color: #854442 !important; }
+
+  [class*="text-purple-"], [class*="text-violet-"], [class*="text-indigo-"], [class*="text-fuchsia-"] { color: #B4A5D6 !important; }
+  [class*="bg-purple-500/"], [class*="bg-violet-500/"], [class*="bg-indigo-500/"] { background-color: color-mix(in srgb, #6E5F94 35%, transparent) !important; }
+  [class*="border-purple-"], [class*="border-violet-"], [class*="border-indigo-"] { border-color: color-mix(in srgb, #6E5F94 74%, transparent) !important; }
+
+  [class*="text-emerald-"], [class*="text-green-"], [class*="text-teal-"] { color: #96CEB4 !important; }
+  [class*="bg-emerald-500/"], [class*="bg-green-500/"] { background-color: color-mix(in srgb, #5FA98A 22%, transparent) !important; }
+  [class*="bg-emerald-400"], [class*="bg-green-400"] { background-color: #5FA98A !important; }
+  [class*="border-emerald-"], [class*="border-green-"] { border-color: color-mix(in srgb, #5FA98A 55%, transparent) !important; }
+
+  [class*="text-amber-"], [class*="text-orange-"], [class*="text-yellow-"] { color: #FFCC5C !important; }
+  [class*="bg-amber-500/"], [class*="bg-orange-500/"] { background-color: color-mix(in srgb, #D9A441 22%, transparent) !important; }
+  [class*="border-amber-"], [class*="border-orange-"] { border-color: color-mix(in srgb, #D9A441 60%, transparent) !important; }
+
+  [class*="text-red-"], [class*="text-rose-"] { color: #FF8A84 !important; }
+  [class*="bg-red-500/"], [class*="bg-rose-500/"] { background-color: color-mix(in srgb, #E8746E 20%, transparent) !important; }
+  [class*="border-red-"], [class*="border-rose-"] { border-color: color-mix(in srgb, #E8746E 55%, transparent) !important; }
+
+  /* Two fixed color values sit directly in the code and can only be
+     targeted via the style attribute: cache read #60a5fa and reasoning #c084fc in
+     the usage bar along with its matching legend dot. Note: React writes
+     inline colors serialized as "rgb(96, 165, 250)" — hence both
+     spellings. Dot at full tone, bar the same tone at 70 percent. Both tones
+     are one step lighter than in "light-clean" so they carry on dark. */
+  [style*="rgb(96, 165, 250)"].rounded-full, [style*="#60a5fa"].rounded-full { background-color: #7FC9C9 !important; }
+  [style*="rgb(96, 165, 250)"]:not(.rounded-full), [style*="#60a5fa"]:not(.rounded-full) { background-color: color-mix(in srgb, #7FC9C9 70%, transparent) !important; }
+  [style*="rgb(192, 132, 252)"].rounded-full, [style*="#c084fc"].rounded-full { background-color: #9A8AC4 !important; }
+  [style*="rgb(192, 132, 252)"]:not(.rounded-full), [style*="#c084fc"]:not(.rounded-full) { background-color: color-mix(in srgb, #9A8AC4 70%, transparent) !important; }
+
+  /* Series colors for input/output. The theme has the "seriesColors"
+     block for this — but the server does not pass it through to the surface
+     (it is missing from the theme info /api/dashboard/themes). So set
+     directly here. !important is needed because the client sets these variables
+     inline on the html element and inline style otherwise wins. */
+  :root {
+    --series-input-token: #FFE28A !important;
+    --series-output-token: #D9A441 !important;
+  }
+
+  /* Round input fields. */
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    border-radius: var(--radius-md) !important;
+  }
+
+  /* Round grid tables as a whole. */
+  .g {
+    border-radius: var(--radius-lg) !important;
+    overflow: hidden;
+  }
+
+  /* Highlight of sidebar entries: rounded surface instead of a bar. */
+  span[class*="inset-y-0.5"][class*="bg-midground"] {
+    border-radius: 8px !important;
+  }
+
+  /* Round buttons with a visible surface. */
+  button[class*="bg-"] {
+    border-radius: var(--radius-md) !important;
+  }
+
+  /* Cards and bordered surfaces. */
+  div[class*="border-border"],
+  div[class*="border-midground"] {
+    border-radius: var(--radius-lg) !important;
+  }
+
+  progress,
+  meter,
+  [role="progressbar"] {
+    border-radius: 999px !important;
+    overflow: hidden;
+  }

@@ -1,43 +1,60 @@
 > **Note: this repository was created with the help of AI.**
-> The theme, the skill and the tooling were built in a collaboration between a human author
+> The themes, the skill and the tooling were built in a collaboration between a human author
 > (direction, design decisions, review) and **Hermes Agent** (implementation, measurements, text).
 > Every claim here was checked against a running dashboard, but read the code before you rely on it.
 
 # hermes-dashboard-theming
 
-A light, clean, rounded theme for the **Hermes web dashboard** — plus the skill and the tooling
-that an agent needs to build themes like it on its own.
+Light and dark, clean, rounded themes for the **Hermes web dashboard** — plus the skill and the
+tooling that an agent needs to build themes like them on its own.
 
 Three things live in this repository:
 
 | What | Where | What it is |
 |---|---|---|
-| The theme | `themes/light-clean.yaml` | One YAML file. Drop it in, pick it in the dashboard. |
+| The themes | `themes/light-clean.yaml`, `themes/dark-clean.yaml` | Two YAML files. Drop them in, pick them in the dashboard. |
 | The skill | `skills/hermes-dashboard-theming/` | Instructions an agent loads to restyle a dashboard: schema, procedures, pitfalls, verification recipes. |
 | The color board | `tools/color-board.html` | A single-file page for trying out hex values live: swatch, example badge, derived fills, WCAG contrast, ready-to-paste snippet. |
 
-## The theme
+Every screenshot below shows the same view twice: **light on the left, dark on the right.**
 
-![Dashboard](screenshots/dashboard-models.png)
+## The themes
 
-![Theme picker](screenshots/theme-picker.png)
+![Dashboard — models](screenshots/models-light-dark.png)
 
-Light canvas, white cards, one modern sans-serif (Inter), rounded corners everywhere, and colour
-used only as an accent — buttons, badges and status marks. The noise/grain overlay that makes the
-stock themes look retro is switched off.
+Both themes are one shape with two surfaces. Light: canvas `#F8F9FB`, cards white. Dark: canvas
+`#0F1115`, cards `#171A21`. Everything else is shared — one modern sans-serif (Inter) for the whole
+UI, rounded corners everywhere, `1rem` radius, the noise/grain overlay switched off, and colour used
+only as an accent on buttons, badges and status marks. The roles invert where they must: the light
+theme's near-black buttons become light buttons with dark labels in the dark theme.
 
-![Skills page](screenshots/dashboard-skills.png)
+**Switching is a selection in the dashboard itself:** open the theme control at the bottom of the
+sidebar and pick *Light Clean* or *Dark Clean* — every entry shows its description, next to the
+stock themes. The theme directory is read once per page load, so anything dropped into
+`$HERMES_HOME/dashboard-themes/` appears in that list.
+
+![Theme picker](screenshots/theme-picker-light-dark.png)
+
+![Skills page](screenshots/skills-light-dark.png)
+
+![Chat](screenshots/chat-light-dark.png)
+
+The chat page keeps its terminal dark in both themes — the dashboard paints that panel itself. The
+session list on the right is blurred in these screenshots; it shows real session titles.
+
+![On a phone](screenshots/phone-models-light-dark.png)
 
 **Install**
 
 ```bash
 mkdir -p "$HERMES_HOME/dashboard-themes"          # default: ~/.hermes/dashboard-themes
-cp themes/light-clean.yaml "$HERMES_HOME/dashboard-themes/"
-hermes config set dashboard.theme light-clean
+cp themes/light-clean.yaml themes/dark-clean.yaml "$HERMES_HOME/dashboard-themes/"
+hermes config set dashboard.theme light-clean      # or: dark-clean
 ```
 
 Then reload the dashboard page completely (a plain reload is enough; the theme list is fetched once
-per page load). Revert any time with `hermes config set dashboard.theme default`.
+per page load) — or simply pick the theme in the UI as described above. Revert any time with
+`hermes config set dashboard.theme default`.
 
 Requires a Hermes version whose web dashboard reads user themes from
 `$HERMES_HOME/dashboard-themes/` (verified against v2026.9.24).
@@ -62,15 +79,18 @@ The skill is written for an agent, not for a human reading it top to bottom. It 
 - the theme schema (palette, typography, layout, `colorOverrides`, `componentStyles`, `customCSS`)
   and which of those fields the shipped build actually reads;
 - the three-layer palette and how every derived token cascades from it;
+- the light recipe, and how to derive the **dark counterpart** from it — which roles invert, which
+  surfaces stay, which tones have to be lifted;
 - how to reach the things a theme *cannot* reach — hard-coded Tailwind colours, inline styles,
   the button bezel, the animated button ring, `rounded-none` surfaces;
 - measuring instead of guessing: reading computed styles in a real browser, counting rounded
   elements, stacking translucent backgrounds before computing contrast;
 - pitfalls that cost hours otherwise, each with the probe that proves it.
 
-Supporting material lives next to it: `references/*.md` (deep dives per topic),
-`templates/light-clean-theme.yaml` (a starting point), `scripts/gen_dashboard_themes.py` (builds a
-whole family of themes from a palette list).
+Supporting material lives next to it: `references/*.md` (deep dives per topic, including
+`contrast-checking.md` with its three classic false alarms), `templates/light-clean-theme.yaml`
+(a starting point), `scripts/gen_dashboard_themes.py` (builds a whole family of themes from a palette
+list).
 
 ## The color board
 
@@ -87,10 +107,12 @@ snippet.
 - **Dashboard themes are not CLI skins.** The terminal look is themed by `display.skin` and files in
   `$HERMES_HOME/skins/`; the web dashboard is themed by `dashboard.theme` and files in
   `$HERMES_HOME/dashboard-themes/`. Two systems, two directories.
-- The theme is a runtime drop-in: no rebuild, no fork, no patching of the dashboard source. It
+- A theme is a runtime drop-in: no rebuild, no fork, no patching of the dashboard source. It
   survives application updates because it lives in the persistent Hermes home, not in the app.
 - Colour values are plain `#rrggbb`. Contrast targets: text against its real background ≥ 4.5:1,
   large graphics ≥ 3:1, button label against its fill ≥ 3.2:1.
+- The screenshots are composited from two captures of the same page — same viewport, same state,
+  only the theme changed. `scripts/pair_screenshots.py` does that composition.
 
 ## License
 
