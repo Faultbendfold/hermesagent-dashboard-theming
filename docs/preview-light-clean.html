@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Preview -- Light Clean</title>
+<style>
+:root { --bg: #F8F9FB; --ink: #111827; --card: #FFFFFF; --panel: #F0F1F4; --muted: #F1F3F6; --mutedFg: #5F6C7F; --primary: #1F2937; --primaryFg: #FFFFFF; --border: #E4E7EC; --ring: #6B7688; --success: #067647; --warning: #B54708; --destructive: #B42318; --radius: 1rem; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.6 "Inter", system-ui, sans-serif; }
+.shell { display: flex; min-height: 100vh; }
+.side { width: 210px; background: var(--panel); border-right: 1px solid var(--border); padding: 18px 14px; }
+.side .brand { font-weight: 600; margin-bottom: 18px; }
+.side a { display: block; color: var(--mutedFg); text-decoration: none; padding: 6px 8px; border-radius: 8px; font-size: 14px; }
+.side a.on { background: var(--muted); color: var(--ink); }
+.main { flex: 1; padding: 22px 26px; }
+.top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+h1 { font-size: 21px; margin: 0; }
+.grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.card h2 { font-size: 15px; margin: 0 0 4px; }
+.card p { margin: 0 0 12px; color: var(--mutedFg); font-size: 13px; }
+button { font: inherit; font-size: 13px; padding: 7px 15px; border: 0; border-radius: 10px;
+         background: var(--primary); color: var(--primaryFg); }
+.ghost { background: var(--muted); color: var(--ink); border: 1px solid var(--border); }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.badge { font-size: 12px; padding: 2px 10px; border-radius: 999px; background: var(--muted); color: var(--ink); }
+.badge.ok { background: var(--success); color: var(--bg); }
+.badge.warn { background: var(--warning); color: var(--bg); }
+.badge.bad { background: var(--destructive); color: var(--card); }
+.bars { display: flex; gap: 6px; align-items: flex-end; height: 64px; margin-top: 6px; }
+.bars i { flex: 1; border-radius: 6px 6px 0 0; background: var(--ring); }
+.term { margin-top: 16px; background: #0B0D10; color: #E6E8EC; border-radius: var(--radius);
+        padding: 12px 14px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; }
+.term b { color: #7FC9C9; font-weight: 500; }
+table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 13px; }
+th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+th { color: var(--mutedFg); font-weight: 500; }
+.sum { margin-top: 14px; font-size: 13px; color: var(--mutedFg); }
+.sum b { color: var(--ink); }
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="side">
+    <div class="brand">Light Clean</div>
+    <a class="on" href="#">Chat</a><a href="#">Models</a><a href="#">Skills</a>
+    <a href="#">Analytics</a><a href="#">Config</a>
+  </aside>
+  <main class="main">
+    <div class="top">
+      <h1>Models</h1>
+      <div class="row"><span class="badge">light</span><button>New session</button></div>
+    </div>
+    <div class="grid">
+      <section class="card">
+        <h2>Active model</h2>
+        <p>Card surface, muted text, primary action.</p>
+        <div class="row"><button>Run</button><button class="ghost">Cancel</button></div>
+      </section>
+      <section class="card">
+        <h2>Status</h2>
+        <p>Semantic colours as chips.</p>
+        <div class="row"><span class="badge ok">ok</span><span class="badge warn">warning</span>
+        <span class="badge bad">failed</span></div>
+      </section>
+      <section class="card">
+        <h2>Usage</h2>
+        <p>Chart bars follow the ring colour.</p>
+        <div class="bars">
+          <i style="height:32%"></i><i style="height:58%"></i><i style="height:44%"></i>
+          <i style="height:76%"></i><i style="height:61%"></i><i style="height:90%"></i>
+        </div>
+      </section>
+    </div>
+    <div class="term">$ <b>hermes</b> config get dashboard.theme<br>light-clean</div>
+    <table><thead><tr><th>pair</th><th>foreground</th><th>surface</th><th>ratio</th><th>need</th></tr></thead>
+    <tbody><tr><td>body text on canvas</td><td><code>#111827</code></td><td><code>#F8F9FB</code></td><td>16.84</td><td>4.5 ok</td></tr>
+<tr><td>text on card</td><td><code>#111827</code></td><td><code>#FFFFFF</code></td><td>17.74</td><td>4.5 ok</td></tr>
+<tr><td>muted text on muted</td><td><code>#5F6C7F</code></td><td><code>#F1F3F6</code></td><td>4.80</td><td>4.5 ok</td></tr>
+<tr><td>button label on primary</td><td><code>#FFFFFF</code></td><td><code>#1F2937</code></td><td>14.68</td><td>3.2 ok</td></tr>
+<tr><td>border on canvas</td><td><code>#E4E7EC</code></td><td><code>#F8F9FB</code></td><td>1.18</td><td>1.1 ok</td></tr></tbody></table>
+    <p class="sum">All 5 measured pairs meet their target. Tightest pair: muted text on muted at 4.80:1 (target 4.5).</p>
+  </main>
+</div>
+</body>
+</html>

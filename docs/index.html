@@ -34,6 +34,7 @@ main { max-width: 1100px; margin: 0 auto; display: grid; gap: 22px;
 .chip.mode-dark  { color: #E6E8EC; background: #111827; border-color: #2A2F3A; }
 .chip.wcag-ok    { color: #0F1115; background: #5FA98A; border-color: #5FA98A; }
 .chip.wcag-bad   { color: #0F1115; background: #E0736B; border-color: #E0736B; }
+.plink { display: inline-block; margin-top: 10px; font-size: 13px; }
 .mock { border-radius: 12px; padding: 14px; margin-bottom: 14px; }
 .mock h3 { margin: 0 0 4px; font-size: 15px; }
 .mock p { margin: 0 0 10px; font-size: 13px; }
@@ -205,6 +206,7 @@ function render() {
       <div class="swatches">${swatches(th)}</div>
       ${contrastTable(th)}
       <pre>hermes config set dashboard.theme ${esc(th.name)}</pre>
+      <a class="plink" href="preview-${esc(th.name)}.html">open the full-size preview &rarr;</a>
     </section>`;
   }).join('');
 }

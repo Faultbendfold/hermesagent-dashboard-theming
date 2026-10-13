@@ -25,6 +25,9 @@ sys.path.insert(0, os.path.join(ROOT, "skills", "hermes-dashboard-theming", "scr
 
 import theme_lib as t  # noqa: E402
 
+sys.path.insert(0, HERE)
+import preview  # noqa: E402  (the single-theme offline page, reused verbatim)
+
 REPO = "https://github.com/Faultbendfold/hermesagent-dashboard-theming"
 
 
@@ -78,6 +81,7 @@ CSS += """
 .chip.mode-dark  { color: #E6E8EC; background: #111827; border-color: #2A2F3A; }
 .chip.wcag-ok    { color: #0F1115; background: #5FA98A; border-color: #5FA98A; }
 .chip.wcag-bad   { color: #0F1115; background: #E0736B; border-color: #E0736B; }
+.plink { display: inline-block; margin-top: 10px; font-size: 13px; }
 .mock { border-radius: 12px; padding: 14px; margin-bottom: 14px; }
 .mock h3 { margin: 0 0 4px; font-size: 15px; }
 .mock p { margin: 0 0 10px; font-size: 13px; }
@@ -271,6 +275,7 @@ function render() {
       <div class="swatches">${swatches(th)}</div>
       ${contrastTable(th)}
       <pre>hermes config set dashboard.theme ${esc(th.name)}</pre>
+      <a class="plink" href="preview-${esc(th.name)}.html">open the full-size preview &rarr;</a>
     </section>`;
   }).join('');
 }
@@ -296,7 +301,14 @@ def build():
                 .replace("__JS__", JS))
     with open(os.path.join(ROOT, "tools", "color-board.html"), encoding="utf-8") as fh:
         board = fh.read()
-    return {"index.html": html, "color-board.html": board}
+    files = {"index.html": html, "color-board.html": board}
+    # one standalone preview page per theme, written by the same renderer the
+    # command line tool uses -- so the gallery and `preview.py` cannot drift
+    for theme in themes:
+        name = theme.get("name")
+        if name:
+            files["preview-%s.html" % name] = preview.render(theme)
+    return files
 
 
 def main():

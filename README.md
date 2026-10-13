@@ -206,11 +206,19 @@ The shared code — the YAML-subset reader, the colour maths and the schema mirr
 ## Browse it without installing
 
 `docs/index.html` is generated from `themes/*.yaml` by `tools/build-gallery.py`: every theme with its
-palette, a mock of its surfaces, its full contrast table and a WCAG summary chip. Open it from the
-file system, or from GitHub Pages (repository **Settings → Pages → Deploy from a branch → `main` /
-`docs`**), where `docs/color-board.html` is served next to it.
+palette, a mock of its surfaces, its full contrast table and a WCAG summary chip. Each card links to
+a **full-size preview page** (`docs/preview-<name>.html`) written by the same renderer as
+`tools/preview.py` -- a whole mock dashboard painted from that theme's tokens, with the measured
+contrast summary underneath.
+
+Open it from the file system, or from GitHub Pages (repository **Settings → Pages → Deploy from a
+branch → `main` / `docs`**), which serves the gallery, the colour board and every preview page.
 
 ![The generated gallery](screenshots/gallery.png)
+
+The preview page itself, light on the left and dark on the right:
+
+![The offline preview page, light and dark](screenshots/preview-light-dark.png)
 
 ## Tests
 

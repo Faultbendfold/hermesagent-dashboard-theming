@@ -25,6 +25,8 @@ contrast fix noted at the end.
 - `tools/preview.py` -- a theme as a standalone offline HTML page, without installing Hermes.
 - `tools/build-gallery.py`, `docs/index.html`, `docs/color-board.html` -- a browsable gallery with
   swatches, a mock of each theme and its WCAG summary.
+- `docs/preview-<name>.html` -- one full-size preview page per theme, published by the gallery
+  builder with the same renderer `tools/preview.py` uses, and linked from each gallery card.
 - `tools/verify.sh` -- every check in one command; `.github/workflows/validate.yml` runs it.
 - `tests/` -- unit tests for the maths and the reader, black-box tests for the tools.
 - `templates/minimal-light.yaml`, `templates/minimal-dark.yaml`.
