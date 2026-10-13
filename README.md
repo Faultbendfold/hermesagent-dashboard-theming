@@ -212,13 +212,15 @@ The shared code — the YAML-subset reader, the colour maths and the schema mirr
 ## Browse it without installing
 
 `docs/index.html` is generated from `themes/*.yaml` by `tools/build-gallery.py`: every theme with its
-palette, a mock of its surfaces, its full contrast table and a WCAG summary chip. Each card links to
+palette, a mock of its surfaces, its five headline contrast pairs and a WCAG summary chip -- the
+complete 13-pair matrix of a theme comes from `tools/contrast-report.py`. Each card links to
 a **full-size preview page** (`docs/preview-<name>.html`) written by the same renderer as
-`tools/preview.py` -- a whole mock dashboard painted from that theme's tokens, with the measured
-contrast summary underneath.
+`tools/preview.py` -- a whole mock dashboard painted from that theme's tokens, with the same five
+measured pairs underneath.
 
-Open it from the file system, or from GitHub Pages (repository **Settings → Pages → Deploy from a
-branch → `main` / `docs`**), which serves the gallery, the colour board and every preview page.
+Browse it online at **https://faultbendfold.github.io/hermesagent-dashboard-theming/** -- that serves
+the gallery, the colour board and every preview page. Locally, open `docs/index.html` from the file
+system; the pages work over `file://` too.
 
 ![The generated gallery](screenshots/gallery.png)
 
