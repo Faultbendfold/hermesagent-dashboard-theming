@@ -140,11 +140,18 @@ done
 echo
 if [ "$dry_run" -eq 1 ]; then
     echo "dry run: nothing was written"
+    if [ -n "$activate" ]; then
+        echo "dry run: activation was skipped as well"
+    fi
     exit 0
 fi
 echo "copied: $copied   skipped: $skipped"
 
 if [ -n "$activate" ]; then
+    if [ "$dest" != "$hermes_home/dashboard-themes" ]; then
+        echo "note: --dest only redirects the copy; activation still affects the Hermes that"
+        echo "      reads $hermes_home/dashboard-themes"
+    fi
     if [ ! -f "$dest/$activate.yaml" ]; then
         echo "note: $dest/$activate.yaml does not exist -- activating anyway"
     fi

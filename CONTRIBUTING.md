@@ -29,6 +29,9 @@ that keep `docs/` and `docs/schema.md` in step with their generators, and the
 
 ## The tools, in one line each
 
+`skills/.../scripts/` below is shorthand for `skills/hermes-dashboard-theming/scripts/`; note that
+the `scripts/` at the repository root is a different directory.
+
 | Tool | Use |
 |---|---|
 | `tools/new-theme.py` | scaffold a theme that already passes the linter |

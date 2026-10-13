@@ -1,6 +1,6 @@
 ---
 name: hermes-dashboard-theming
-description: "Reskin the Hermes web dashboard with YAML themes."
+description: "Use when restyling the Hermes web dashboard (themes). Schema, palette maths, dark twin, contrast targets, pitfalls, tooling."
 version: 1.0.0
 author: Faultbendfold, Hermes Agent
 license: MIT

@@ -87,6 +87,10 @@ Or copy the directory into your own skill tree:
 cp -r skills/hermes-dashboard-theming "$HERMES_HOME/skills/devops/"
 ```
 
+A tap only registers a source; the skill files arrive when you install from it. If you already have
+a skill with this `name:` in your tree, installing this one shadows it -- Hermes warns about it, and
+to keep both, rename the older one or install this into a category directory.
+
 The skill is written for an agent, not for a human reading it top to bottom. It covers:
 
 - the theme schema (palette, typography, layout, `colorOverrides`, `componentStyles`, `customCSS`)
@@ -103,7 +107,7 @@ The skill is written for an agent, not for a human reading it top to bottom. It 
 Supporting material lives next to it: `references/*.md` (deep dives per topic, including
 `contrast-checking.md` with its three classic false alarms), `templates/light-clean-theme.yaml`
 (a starting point), `scripts/gen_dashboard_themes.py` (builds a whole family of themes from a palette
-list).
+list) — all of those paths are inside `skills/hermes-dashboard-theming/`.
 
 ## The color board
 
@@ -201,7 +205,9 @@ verify: all checks passed
 ```
 
 The shared code — the YAML-subset reader, the colour maths and the schema mirror — lives in
-`scripts/theme_lib.py`; import it rather than re-deriving `lum`/`ratio`/`mix`.
+`skills/hermes-dashboard-theming/scripts/theme_lib.py`; import it rather than re-deriving
+`lum`/`ratio`/`mix`. (Careful: the `scripts/` at the repository root is a different thing — it holds
+`pair_screenshots.py`, the screenshot compositor.)
 
 ## Browse it without installing
 

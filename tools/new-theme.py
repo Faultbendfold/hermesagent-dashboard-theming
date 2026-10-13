@@ -177,9 +177,13 @@ def main(argv=None):
         r = t.ratio(fg, bg)
         print("  %-22s %-9s %-11s %5.2f  %s (>= %.1f)"
               % (lbl, fg, bg, r, "ok " if r >= target else "LOW", target))
-    print("\nnext:")
+    print("next:")
     print("  python3 skills/hermes-dashboard-theming/scripts/theme-check.py %s" % path)
-    print("  ./install.sh --activate %s" % name)
+    if os.path.abspath(args.out) == os.path.abspath(os.path.join(ROOT, "themes")):
+        print("  ./install.sh --activate %s" % name)
+    else:
+        print('  cp %s "$HERMES_HOME/dashboard-themes/"' % path)
+        print("  hermes config set dashboard.theme %s" % name)
     return 0
 
 
