@@ -38,7 +38,7 @@ colorOverrides:
   secondary: "#EEF1F5"
   secondaryForeground: "#111827"
   muted: "#F1F3F6"
-  mutedForeground: "#64748B"
+  mutedForeground: "#5F6C7F"
   accent: "#E8EDF4"
   accentForeground: "#111827"
   destructive: "#B42318"
@@ -47,7 +47,7 @@ colorOverrides:
   warning: "#B54708"
   border: "#E4E7EC"
   input: "#E4E7EC"
-  ring: "#94A3B8"
+  ring: "#6B7688"
 
 # Chart series (usage bars on the models page and in analytics).
 # The app's defaults were orange #FFE6CB and emerald #34D399; here derived

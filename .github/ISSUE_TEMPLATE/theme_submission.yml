@@ -1,0 +1,54 @@
+name: Theme submission
+description: Offer a theme you built, without opening a pull request
+title: "[theme] "
+labels: ["theme"]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Theme name
+      description: the lower-case slug used in the file name and in dashboard.theme
+    validations:
+      required: true
+  - type: textarea
+    id: intent
+    attributes:
+      label: What it is for, and what makes it different
+    validations:
+      required: true
+  - type: textarea
+    id: yaml
+    attributes:
+      label: The theme YAML
+      render: yaml
+    validations:
+      required: true
+  - type: textarea
+    id: contrast
+    attributes:
+      label: The measured contrast table
+      description: python3 tools/contrast-report.py --format markdown your-theme.yaml
+      render: markdown
+    validations:
+      required: true
+  - type: dropdown
+    id: modes
+    attributes:
+      label: Which modes does it cover?
+      options:
+        - light only
+        - dark only
+        - light and dark pair
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: "`theme-check.py --strict` is green for this theme"
+          required: true
+        - label: I checked it against a running dashboard, not only in theory
+          required: true
+        - label: It was produced with the help of an AI agent (say so if it was)
+          required: false

@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Color Board — Models Page</title>
+<style>
+  :root {
+    --seite: #F8F9FB; --karte: #FFFFFF; --text: #111827; --gedaempft: #64748B;
+    --rand: #E4E7EC; --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 20px 16px 60px; background: var(--seite); color: var(--text);
+    font: 15px/1.55 "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    letter-spacing: -0.011em;
+  }
+  h1 { font-size: 21px; margin: 0 0 4px; }
+  .hinweis { color: var(--gedaempft); font-size: 13.5px; margin: 0 0 18px; }
+  .gruppe {
+    background: var(--karte); border: 1px solid var(--rand); border-radius: var(--radius);
+    padding: 14px 16px 6px; margin-bottom: 14px;
+  }
+  .gruppe > h2 {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .12em;
+    color: var(--gedaempft); margin: 0 0 12px; font-weight: 600;
+  }
+  .zeile {
+    display: grid; gap: 10px 14px; align-items: center; padding: 10px 0;
+    border-top: 1px solid #EEF1F5;
+    grid-template-columns: 220px minmax(210px, 1fr) minmax(230px, 1.1fr);
+  }
+  .zeile:first-of-type { border-top: 0; }
+  .name { font-weight: 500; font-size: 14px; }
+  .name small { display: block; color: var(--gedaempft); font-weight: 400; font-size: 12.5px; }
+  .eingabe { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  input[type="color"] {
+    width: 46px; height: 36px; padding: 2px; border: 1px solid var(--rand);
+    border-radius: 9px; background: #fff; cursor: pointer;
+  }
+  input[type="text"], input[type="number"] {
+    font: inherit; font-size: 16px; padding: 7px 9px; border: 1px solid var(--rand);
+    border-radius: 9px; background: #fff; color: var(--text); width: 104px;
+  }
+  input[type="number"] { width: 74px; }
+  input.kurz { width: 92px; }
+  .felder { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .feld-paar { display: flex; align-items: center; gap: 6px; }
+  .feld-paar span { font-size: 12.5px; color: var(--gedaempft); }
+  .panel { display: flex; gap: 10px; align-items: stretch; flex-wrap: wrap; }
+  .probe {
+    min-width: 92px; min-height: 44px; border-radius: 10px; border: 1px solid var(--rand);
+    display: flex; align-items: center; justify-content: center; font-size: 12px;
+    padding: 6px 10px; text-align: center;
+  }
+  .probe.pille { border-radius: 999px; font-weight: 600; letter-spacing: .04em; }
+  .messwerte { font-size: 12.5px; color: var(--gedaempft); margin-top: 2px; }
+  .good { color: #2C7A57; font-weight: 600; }
+  .medium { color: #8A6100; font-weight: 600; }
+  .poor { color: #B02A24; font-weight: 600; }
+  .leiste {
+    position: sticky; bottom: 0; margin-top: 6px; padding: 12px 0 0;
+    background: linear-gradient(to top, var(--seite) 70%, rgba(248,249,251,0));
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  button {
+    font: inherit; font-size: 14px; font-weight: 500; padding: 10px 16px; cursor: pointer;
+    border-radius: 11px; border: 1px solid var(--rand); background: #fff; color: var(--text);
+  }
+  button.dunkel { background: #111827; color: #fff; border-color: #111827; }
+  textarea {
+    width: 100%; min-height: 190px; font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12.5px; line-height: 1.5; padding: 12px; border: 1px solid var(--rand);
+    border-radius: 12px; background: #fff; color: var(--text); resize: vertical;
+  }
+  .stand { font-size: 12.5px; color: var(--gedaempft); margin-left: auto; align-self: center; }
+  @media (max-width: 860px) {
+    .zeile { grid-template-columns: 1fr; }
+    .zeile .name { margin-bottom: 2px; }
+  }
+</style>
+</head>
+<body>
+  <h1>Color Board — Models Page</h1>
+  <p class="hinweis">
+    Change the hex values on the left → the right side is recalculated instantly. The values stay
+    stored in the browser. The finished output for the theme is at the bottom.
+  </p>
+  <div id="tafel"></div>
+
+  <div class="leiste">
+    <button class="dunkel" id="neu">Redraw everything</button>
+    <button id="zurueck">Reset to defaults</button>
+    <span class="stand" id="stand"></span>
+  </div>
+
+  <div class="gruppe" style="margin-top:14px">
+    <h2>Output for the theme</h2>
+    <textarea id="ausgabe" spellcheck="false"></textarea>
+    <div class="leiste" style="position:static;background:none">
+      <button id="kopieren">Copy output</button>
+      <span class="stand" id="kopierstand"></span>
+    </div>
+  </div>
+
+<script>
+/* Values of the models page. art controls what is computed on the right:
+   flaeche  – surface only
+   schrift  – text with opacity (alpha in percent)
+   pille    – surface in palette color + text inside (share in percent)
+   serie    – gradient series: dot full, bar at 70 percent
+   zustand  – like pille, for success/warning/danger                        */
+var VORGABE = [
+  { gruppe: "Surfaces", eintraege: [
+    { id: "seite",  name: "Page (canvas)",           art: "flaeche", hex: "#F8F9FB" },
+    { id: "karte",  name: "Cards, dialogs",          art: "flaeche", hex: "#FFFFFF" },
+    { id: "chip",   name: "Neutral chip",            art: "flaeche", hex: "#E6E7EA" }
+  ]},
+  { gruppe: "Text", eintraege: [
+    { id: "txt1", name: "Default text",              art: "schrift", hex: "#111827", alpha: 100 },
+    { id: "txt2", name: "Secondary text",            art: "schrift", hex: "#111827", alpha: 80 },
+    { id: "txt3", name: "Metadata",                  art: "schrift", hex: "#111827", alpha: 65 },
+    { id: "txt4", name: "Muted hints",               art: "schrift", hex: "#64748B", alpha: 100 }
+  ]},
+  { gruppe: "Borders", eintraege: [
+    { id: "rand",  name: "Card and field borders",   art: "linie", hex: "#E4E7EC" },
+    { id: "haar",  name: "Button hairline",          art: "linie", hex: "#111827" }
+  ]},
+  { gruppe: "Capabilities (labels)", eintraege: [
+    { id: "tools",     name: "Tools",       art: "pille", hex: "#BE9B7B", text: "#4B3832", anteil: 28 },
+    { id: "vision",    name: "Vision",      art: "pille", hex: "#854442", text: "#4B3832", anteil: 54 },
+    { id: "reasoning", name: "Reasoning",   art: "pille", hex: "#6E5F94", text: "#6E5F94", anteil: 35 },
+    { id: "familie",   name: "Model family", art: "pille", hex: "#E6E7EA", text: "#111827", anteil: 100 }
+  ]},
+  { gruppe: "Usage (bars and legend)", eintraege: [
+    { id: "s_input",  name: "Input",       art: "serie", hex: "#FFE28A" },
+    { id: "s_output", name: "Output",      art: "serie", hex: "#D9A441" },
+    { id: "s_cache",  name: "Cache Read",  art: "serie", hex: "#66B2B2" },
+    { id: "s_reason", name: "Reasoning",   art: "serie", hex: "#6E5F94" }
+  ]},
+  { gruppe: "Status", eintraege: [
+    { id: "ok",   name: "Running / success", art: "pille", hex: "#96CEB4", text: "#2C7A57", anteil: 28 },
+    { id: "warn", name: "Warning",           art: "pille", hex: "#FFCC5C", text: "#8A6100", anteil: 38 },
+    { id: "fehl", name: "Error / danger",    art: "pille", hex: "#FF6F69", text: "#B02A24", anteil: 30 }
+  ]}
+];
+
+var SCHLUESSEL = "farbboard-modelle-v1";
+/* English key names for the generated output; the internal ids stay untouched. */
+var NAMEN = {
+  seite: "page", karte: "card", chip: "chip",
+  txt1: "text1", txt2: "text2", txt3: "text3", txt4: "text4",
+  rand: "border", haar: "hairline",
+  tools: "tools", vision: "vision", reasoning: "reasoning", familie: "model-family",
+  s_input: "input", s_output: "output", s_cache: "cache-read", s_reason: "reasoning-series",
+  ok: "success", warn: "warning", fehl: "danger"
+};
+var speicher = {};                       /* fallback in case localStorage is blocked (file://) */
+function holen(k) { try { var v = localStorage.getItem(k); return v === null ? (speicher[k] || null) : v; }
+                    catch (e) { return speicher[k] || null; } }
+function setzen(k, v) { try { localStorage.setItem(k, v); } catch (e) {} speicher[k] = v; }
+
+function hexOk(s) { return /^#?[0-9a-fA-F]{6}$/.test(String(s).trim()); }
+function normHex(s) { var t = String(s).trim(); if (t.charAt(0) !== "#") t = "#" + t; return t.toUpperCase(); }
+function rgb(h) {
+  h = normHex(h);
+  return [parseInt(h.substr(1, 2), 16), parseInt(h.substr(3, 2), 16), parseInt(h.substr(5, 2), 16)];
+}
+function alsHex(r, g, b) {
+  return "#" + [r, g, b].map(function (v) {
+    var x = Math.max(0, Math.min(255, Math.round(v))).toString(16).toUpperCase();
+    return x.length === 1 ? "0" + x : x;
+  }).join("");
+}
+function mischen(vorn, anteil, hinten) {
+  var a = rgb(vorn), b = rgb(hinten), f = anteil / 100;
+  return alsHex(a[0] * f + b[0] * (1 - f), a[1] * f + b[1] * (1 - f), a[2] * f + b[2] * (1 - f));
+}
+function mitAlpha(vorn, anteil, hinten) { return mischen(vorn, anteil, hinten || "#FFFFFF"); }
+function leuchtkraft(h) {
+  var c = rgb(h).map(function (v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); });
+  return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+}
+function kontrast(a, b) {
+  var la = leuchtkraft(a), lb = leuchtkraft(b);
+  return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+}
+function bewertung(wert, grenze) {
+  var ok = wert >= grenze, mid = !ok && wert >= 3 && grenze > 3.5;
+  var klasse = ok ? "good" : (mid ? "medium" : "poor");
+  var zusatz = ok ? "" : (mid ? " (only sufficient for large text)" : " (too low, needs " + grenze.toFixed(1).replace(".", ",") + ")");
+  return '<span class="' + klasse + '">' + wert.toFixed(2).replace(".", ",") + ':1</span>' + zusatz;
+}
+
+/* ---------- Build: create the rows once, then only update them ---------- */
+var tafel = document.getElementById("tafel");
+var eingaben = {};
+
+function baueZeile(e) {
+  var zeile = document.createElement("div");
+  zeile.className = "zeile";
+
+  var name = document.createElement("div");
+  name.className = "name";
+  name.innerHTML = e.name + (e.art === "serie" ? "<small>Dot full, bar at 70 %</small>"
+                     : e.art === "pille" ? "<small>Surface from palette color, text inside</small>"
+                     : e.art === "linie" ? "<small>Visibility against the page</small>"
+                     : e.art === "schrift" ? "<small>Opacity in percent</small>" : "");
+  zeile.appendChild(name);
+
+  var eingabe = document.createElement("div");
+  eingabe.className = "eingabe";
+
+  var farbwahl = document.createElement("input");
+  farbwahl.type = "color";
+  var textfeld = document.createElement("input");
+  textfeld.type = "text";
+  textfeld.spellcheck = false;
+  textfeld.className = "kurz";
+  eingabe.appendChild(farbwahl);
+  eingabe.appendChild(textfeld);
+  eingaben[e.id] = { hex: textfeld, wahl: farbwahl };
+
+  if (e.art === "pille") {
+    var textWahl = document.createElement("input");
+    textWahl.type = "color";
+    var textHex = document.createElement("input");
+    textHex.type = "text";
+    textHex.spellcheck = false;
+    textHex.className = "kurz";
+    eingabe.appendChild(textWahl);
+    eingabe.appendChild(textHex);
+    eingaben[e.id].text = textHex;
+    eingaben[e.id].textWahl = textWahl;
+  }
+  if (e.art === "pille" || e.art === "schrift") {
+    var anteil = document.createElement("input");
+    anteil.type = "number";
+    anteil.min = 0; anteil.max = 100; anteil.step = 1;
+    eingabe.appendChild(anteil);
+    eingaben[e.id].anteil = anteil;
+  }
+  zeile.appendChild(eingabe);
+
+  var panel = document.createElement("div");
+  panel.className = "panel";
+  var probe = document.createElement("div");
+  probe.className = "probe" + (e.art === "pille" ? " pille" : "");
+  var probe2 = document.createElement("div");
+  probe2.className = "probe";
+  panel.appendChild(probe);
+  panel.appendChild(probe2);
+  var werte = document.createElement("div");
+  werte.className = "messwerte";
+  var huelle = document.createElement("div");
+  huelle.appendChild(panel);
+  huelle.appendChild(werte);
+  zeile.appendChild(huelle);
+
+  eingaben[e.id].probe = probe;
+  eingaben[e.id].probe2 = probe2;
+  eingaben[e.id].werte = werte;
+  eingaben[e.id].art = e.art;
+  eingaben[e.id].name = e.name;
+  return zeile;
+}
+
+function baueTafel() {
+  VORGABE.forEach(function (g) {
+    var kasten = document.createElement("div");
+    kasten.className = "gruppe";
+    var kopf = document.createElement("h2");
+    kopf.textContent = g.gruppe;
+    kasten.appendChild(kopf);
+    g.eintraege.forEach(function (e) { kasten.appendChild(baueZeile(e)); });
+    tafel.appendChild(kasten);
+  });
+}
+
+function ladeWerte() {
+  var roh = holen(SCHLUESSEL);
+  var daten = {};
+  if (roh) { try { daten = JSON.parse(roh) || {}; } catch (e) { daten = {}; } }
+  VORGABE.forEach(function (g) {
+    g.eintraege.forEach(function (e) {
+      var d = daten[e.id] || {};
+      eingaben[e.id].hex.value = d.hex || e.hex;
+      eingaben[e.id].hex.dataset.standard = e.hex;
+      eingaben[e.id].wahl.value = normHex(d.hex || e.hex);
+      if (eingaben[e.id].text) {
+        eingaben[e.id].text.value = d.text || e.text;
+        eingaben[e.id].text.dataset.standard = e.text;
+      }
+      if (eingaben[e.id].textWahl) eingaben[e.id].textWahl.value = normHex(d.text || e.text);
+      if (eingaben[e.id].anteil) {
+        var vorgabe = e.anteil !== undefined ? e.anteil : (e.alpha !== undefined ? e.alpha : 100);
+        var a = (d.anteil === undefined || d.anteil === null) ? vorgabe : d.anteil;
+        eingaben[e.id].anteil.value = a;
+        eingaben[e.id].anteil.dataset.standard = vorgabe;
+      }
+    });
+  });
+}
+
+function sammle() {
+  var daten = {};
+  Object.keys(eingaben).forEach(function (id) {
+    var f = eingaben[id];
+    daten[id] = { hex: f.hex.value.trim() };
+    if (f.text) daten[id].text = f.text.value.trim();
+    if (f.anteil) daten[id].anteil = Number(f.anteil.value);
+  });
+  return daten;
+}
+
+/* ---------- Draw: recompute all panels and the output ---------- */
+function zeichne() {
+  var daten = sammle();
+  var zeilen = [];
+
+  Object.keys(eingaben).forEach(function (id) {
+    var f = eingaben[id];
+    var hexRoh = f.hex.value.trim();
+    var gueltig = hexOk(hexRoh);
+    f.hex.style.borderColor = gueltig ? "" : "#B02A24";
+    f.hex.style.color = gueltig ? "" : "#B02A24";
+    if (!gueltig) return;
+
+    var hex = normHex(hexRoh);
+    var textRoh = f.text ? f.text.value.trim() : null;
+    var textGueltig = !f.text || hexOk(textRoh);
+    if (f.text) {
+      f.text.style.borderColor = textGueltig ? "" : "#B02A24";
+      f.text.style.color = textGueltig ? "" : "#B02A24";
+    }
+    var textHex = f.text && textGueltig ? normHex(textRoh) : "#111827";
+    var anteil = f.anteil ? Number(f.anteil.value) : 100;
+
+    if (f.art === "flaeche") {
+      f.probe.style.background = hex;
+      f.probe.textContent = "";
+      f.probe2.style.display = "none";
+      f.werte.innerHTML = "Text on it: " + bewertung(kontrast("#111827", hex), 4.5) +
+        " &nbsp;·&nbsp; Text " + hex;
+    } else if (f.art === "linie") {
+      f.probe.style.background = "linear-gradient(to bottom, #F8F9FB 0 13px, " + hex + " 13px 16px, #F8F9FB 16px 100%)";
+      f.probe.textContent = "Line on page";
+      f.probe2.style.display = "none";
+      f.werte.innerHTML = "visible against page: " + bewertung(kontrast(hex, "#F8F9FB"), 1.15) +
+        " &nbsp;·&nbsp; " + hex;
+    } else if (f.art === "schrift") {
+      var gemischt = mitAlpha(hex, anteil, "#FFFFFF");
+      f.probe.style.background = "#FFFFFF";
+      f.probe.style.color = gemischt;
+      f.probe.textContent = "Sample " + anteil + " %";
+      f.probe2.style.display = "";
+      f.probe2.style.background = "#111827";
+      f.probe2.style.color = gemischt;
+      f.probe2.textContent = "on dark";
+      f.werte.innerHTML = "on light surface: " + bewertung(kontrast(gemischt, "#FFFFFF"), 4.5) +
+        " &nbsp;·&nbsp; on dark surface: " + kontrast(gemischt, "#111827").toFixed(2).replace(".", ",") +
+        ":1 (for display only)" + " &nbsp;·&nbsp; effective " + gemischt;
+    } else if (f.art === "pille") {
+      var flaeche = anteil >= 100 ? hex : mischen(hex, anteil, "#FFFFFF");
+      f.probe.style.background = flaeche;
+      f.probe.style.color = textHex;
+      f.probe.style.borderColor = mischen(hex, Math.min(100, anteil * 2.1), "#FFFFFF");
+      f.probe.textContent = f.name.split(" ")[0];
+      f.probe2.style.display = "";
+      f.probe2.style.background = hex;
+      f.probe2.style.color = "#111827";
+      f.probe2.textContent = "Palette";
+      f.werte.innerHTML = "Text on surface: " + bewertung(kontrast(textHex, flaeche), 4.5) +
+        " &nbsp;·&nbsp; surface " + flaeche + " &nbsp;·&nbsp; border " + mischen(hex, Math.min(100, anteil * 2.1), "#FFFFFF");
+    } else if (f.art === "serie") {
+      f.probe.style.background = hex;
+      f.probe.textContent = "Dot";
+      f.probe2.style.display = "";
+      f.probe2.style.background = mischen(hex, 70, "#FFFFFF");
+      f.probe2.textContent = "Bar 70 %";
+      f.werte.innerHTML = "on white: " + bewertung(kontrast(hex, "#FFFFFF"), 3) +
+        " &nbsp;·&nbsp; bar " + mischen(hex, 70, "#FFFFFF");
+    }
+    zeilen.push((NAMEN[id] || id) + ": " + hex + (f.text ? " / " + textHex : "") + (f.anteil ? " / " + anteil + "%" : ""));
+  });
+
+  var aus = [];
+  aus.push("# Raw values from the color board");
+  aus.push(zeilen.join("\n"));
+  aus.push("");
+  aus.push("# Series (Input/Output)");
+  aus.push("seriesColors:");
+  aus.push("  inputTokenAccent: \"" + (eingaben.s_input ? normHex(eingaben.s_input.hex.value) : "") + "\"");
+  aus.push("  outputTokenAccent: \"" + (eingaben.s_output ? normHex(eingaben.s_output.hex.value) : "") + "\"");
+  aus.push("");
+  aus.push("# Ready-made rules for customCSS");
+  [["success", "tools", "ok"], ["warning", "warn", "warn"], ["destructive", "fehl", "fehl"]].forEach(function (t) {
+    var f = eingaben[t[1]] || eingaben[t[2]];
+    if (!f) return;
+    aus.push('  [class*="text-' + t[0] + '"] { color: ' + normHex(f.text.value) + ' !important; }');
+    aus.push('  [class*="bg-' + t[0] + '/"] { background-color: color-mix(in srgb, ' +
+      normHex(f.hex.value) + " " + Number(f.anteil.value) + '%, transparent) !important; }');
+    aus.push('  [class*="border-' + t[0] + '"] { border-color: color-mix(in srgb, ' +
+      normHex(f.hex.value) + " " + Math.min(100, Math.round(Number(f.anteil.value) * 2.1)) +
+      '%, transparent) !important; }');
+  });
+  aus.push('  :root {');
+  aus.push('    --series-input-token: ' + normHex(eingaben.s_input.hex.value) + ' !important;');
+  aus.push('    --series-output-token: ' + normHex(eingaben.s_output.hex.value) + ' !important;');
+  aus.push('  }');
+  document.getElementById("ausgabe").value = aus.join("\n");
+  document.getElementById("stand").textContent = "last changed just now";
+  setzen(SCHLUESSEL, JSON.stringify(daten));
+}
+
+/* ---------- Wire behaviour (live while typing AND via button) ---------- */
+function verbinde() {
+  Object.keys(eingaben).forEach(function (id) {
+    var f = eingaben[id];
+    ["hex", "text"].forEach(function (feld) {
+      if (!f[feld]) return;
+      f[feld].addEventListener("input", function () {
+        if (hexOk(f[feld].value) && f[feld + "Wahl"]) f[feld + "Wahl"].value = normHex(f[feld].value);
+        zeichne();
+      });
+      f[feld].addEventListener("change", function () {
+        if (hexOk(f[feld].value)) f[feld].value = normHex(f[feld].value);
+        zeichne();
+      });
+      f[feld].addEventListener("keydown", function (ev) { if (ev.key === "Enter") zeichne(); });
+    });
+    ["wahl", "textWahl"].forEach(function (feld) {
+      if (!f[feld]) return;
+      f[feld].addEventListener("input", function () {
+        var ziel = feld === "wahl" ? "hex" : "text";
+        f[ziel].value = f[feld].value.toUpperCase();
+        zeichne();
+      });
+    });
+    if (f.anteil) f.anteil.addEventListener("input", zeichne);
+  });
+  document.getElementById("neu").addEventListener("click", function () {
+    Object.keys(eingaben).forEach(function (id) {
+      var f = eingaben[id];
+      if (hexOk(f.hex.value)) f.hex.value = normHex(f.hex.value);
+      if (f.text && hexOk(f.text.value)) f.text.value = normHex(f.text.value);
+    });
+    zeichne();
+  });
+  document.getElementById("zurueck").addEventListener("click", function () {
+    Object.keys(eingaben).forEach(function (id) {
+      var f = eingaben[id];
+      f.hex.value = f.hex.dataset.standard;
+      f.wahl.value = normHex(f.hex.dataset.standard);
+      if (f.text) { f.text.value = f.text.dataset.standard; f.textWahl.value = normHex(f.text.dataset.standard); }
+      if (f.anteil) f.anteil.value = f.anteil.dataset.standard;
+    });
+    zeichne();
+  });
+  document.getElementById("kopieren").addEventListener("click", function () {
+    var feld = document.getElementById("ausgabe");
+    feld.select();
+    var meldung = document.getElementById("kopierstand");
+    try {
+      var ok = document.execCommand("copy");
+      meldung.textContent = ok ? "copied" : "please copy manually";
+    } catch (e) { meldung.textContent = "please copy manually"; }
+  });
+}
+
+/* For external checks: read the state */
+window.__board = {
+  stand: function () { return sammle(); },
+  zeichne: zeichne,
+  farben: function () {
+    var aus = {};
+    Object.keys(eingaben).forEach(function (id) {
+      aus[id] = { flaeche: eingaben[id].probe.style.background, schrift: eingaben[id].probe.style.color };
+    });
+    return aus;
+  }
+};
+
+baueTafel();
+ladeWerte();
+verbinde();
+zeichne();
+</script>
+</body>
+</html>

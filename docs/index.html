@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hermes dashboard themes</title>
+<style>
+:root {
+  --page: #0F1115; --panel: #171A21; --panel-2: #1F2430; --line: #2A2F3A;
+  --ink: #E6E8EC; --ink-2: #9BA3AF; --accent: #7FC9C9;
+  --ok: #5FA98A; --bad: #E0736B;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0 20px 60px; background: var(--page); color: var(--ink);
+  font: 15px/1.6 "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); }
+header { max-width: 1100px; margin: 0 auto; padding: 44px 0 26px; }
+h1 { margin: 0 0 8px; font-size: 30px; letter-spacing: -0.02em; }
+header p { margin: 0 0 6px; color: var(--ink-2); max-width: 74ch; }
+main { max-width: 1100px; margin: 0 auto; display: grid; gap: 22px;
+       grid-template-columns: repeat(auto-fit, minmax(440px, 1fr)); }
+
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+        padding: 20px 20px 16px; }
+.card h2 { margin: 0; font-size: 19px; }
+.card .meta { color: var(--ink-2); font-size: 13px; margin: 2px 0 12px; }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 14px; }
+.chip { font-size: 12px; padding: 3px 9px; border-radius: 999px;
+        border: 1px solid var(--line); color: var(--ink-2); }
+.chip.mode-light { color: #111827; background: #E6E8EC; border-color: #E6E8EC; }
+.chip.mode-dark  { color: #E6E8EC; background: #111827; border-color: #2A2F3A; }
+.chip.wcag-ok    { color: #0F1115; background: #5FA98A; border-color: #5FA98A; }
+.chip.wcag-bad   { color: #0F1115; background: #E0736B; border-color: #E0736B; }
+.mock { border-radius: 12px; padding: 14px; margin-bottom: 14px; }
+.mock h3 { margin: 0 0 4px; font-size: 15px; }
+.mock p { margin: 0 0 10px; font-size: 13px; }
+.mock .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.mock button { font: inherit; font-size: 13px; padding: 6px 14px; border-radius: 10px;
+               border: 0; cursor: default; }
+.mock .badge { font-size: 12px; padding: 2px 9px; border-radius: 999px; }
+.swatches { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 14px; }
+.sw { width: 76px; }
+.sw .box { height: 34px; border-radius: 8px; border: 1px solid var(--line); }
+.sw .lbl { font-size: 10px; color: var(--ink-2); margin-top: 4px; word-break: break-all; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { text-align: left; padding: 5px 6px; border-bottom: 1px solid var(--line); }
+th { color: var(--ink-2); font-weight: 500; }
+td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.pass { color: var(--ok); } .fail { color: var(--bad); }
+code, pre { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 12px; }
+pre { background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px;
+      padding: 10px 12px; overflow-x: auto; }
+footer { max-width: 1100px; margin: 34px auto 0; color: var(--ink-2); font-size: 13px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Hermes dashboard themes</h1>
+  <p>Every theme in this repository, rendered from its YAML with the measured contrast. The values
+     below are read out of <code>themes/*.yaml</code> by <code>tools/build-gallery.py</code> &mdash;
+     nothing here is typed in by hand.</p>
+  <p><a href="https://github.com/Faultbendfold/hermesagent-dashboard-theming">Repository</a> &middot; <a href="color-board.html">Colour board</a>
+     &middot; <a href="https://github.com/Faultbendfold/hermesagent-dashboard-theming#readme">Install instructions</a></p>
+</header>
+<main id="themes"></main>
+<footer>
+  <p>Contrast is measured against the surface the colour actually sits on: text against the card,
+  the button label against its fill, muted text against <code>muted</code>. Targets: 4.5:1 for text,
+  3.2:1 for a button label. Tinted chips composite further &mdash; measure the real page for
+  those (<code>references/contrast-checking.md</code> in the skill).</p>
+</footer>
+<script id="theme-data" type="application/json">[{"name":"dark-clean","label":"Dark Clean","description":"Dark, clean, rounded dashboard theme with a calm palette.","palette":{"background":"#0F1115","midground":"#E6E8EC","foreground":{"hex":"#FFFFFF","alpha":"0"},"warmGlow":"rgba(230, 232, 236, 0.03)","noiseOpacity":"0"},"typography":{"fontSans":"\"Inter\", system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif","fontDisplay":"\"Inter\", system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif","fontMono":"ui-monospace, \"SF Mono\", Menlo, Consolas, monospace","baseSize":"15px","lineHeight":"1.6","letterSpacing":"-0.011em","fontUrl":"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"},"layout":{"radius":"1rem","density":"comfortable"},"colorOverrides":{"card":"#171A21","cardForeground":"#E6E8EC","popover":"#1B1F27","popoverForeground":"#E6E8EC","primary":"#E6E8EC","primaryForeground":"#111827","secondary":"#232833","secondaryForeground":"#E6E8EC","muted":"#1B1F27","mutedForeground":"#9BA3AF","accent":"#242A35","accentForeground":"#E6E8EC","destructive":"#FF8A84","destructiveForeground":"#1A0F0E","success":"#96CEB4","warning":"#FFCC5C","border":"#2A2F3A","input":"#2A2F3A","ring":"#5A6270"},"seriesColors":{"inputTokenAccent":"#FFE28A","outputTokenAccent":"#D9A441"},"componentStyles":{"card":{"background":"#171A21","boxShadow":"0 1px 2px rgba(0, 0, 0, 0.45), 0 12px 32px -20px rgba(0, 0, 0, 0.75)"},"header":{"background":"#141821"},"sidebar":{"background":"#141821"}},"_file":"dark-clean.yaml","_cssBytes":11717,"_cssSeries":true},{"name":"light-clean","label":"Light Clean","description":"Light, clean, rounded dashboard theme with a calm palette.","palette":{"background":"#F8F9FB","midground":"#111827","foreground":{"hex":"#FFFFFF","alpha":"0"},"warmGlow":"rgba(17, 24, 39, 0.03)","noiseOpacity":"0"},"typography":{"fontSans":"\"Inter\", system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif","fontDisplay":"\"Inter\", system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif","fontMono":"ui-monospace, \"SF Mono\", Menlo, Consolas, monospace","baseSize":"15px","lineHeight":"1.6","letterSpacing":"-0.011em","fontUrl":"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"},"layout":{"radius":"1rem","density":"comfortable"},"colorOverrides":{"card":"#FFFFFF","cardForeground":"#111827","popover":"#FFFFFF","popoverForeground":"#111827","primary":"#1F2937","primaryForeground":"#FFFFFF","secondary":"#EEF1F5","secondaryForeground":"#111827","muted":"#F1F3F6","mutedForeground":"#5F6C7F","accent":"#E8EDF4","accentForeground":"#111827","destructive":"#B42318","destructiveForeground":"#FFFFFF","success":"#067647","warning":"#B54708","border":"#E4E7EC","input":"#E4E7EC","ring":"#6B7688"},"seriesColors":{"inputTokenAccent":"#FFE28A","outputTokenAccent":"#D9A441"},"componentStyles":{"card":{"background":"#FFFFFF","boxShadow":"0 1px 2px rgba(16, 24, 40, 0.04), 0 12px 32px -20px rgba(16, 24, 40, 0.18)"},"header":{"background":"#FFFFFF"},"sidebar":{"background":"#FFFFFF"}},"_file":"light-clean.yaml","_cssBytes":11520,"_cssSeries":true}]</script>
+<script>
+
+const THEMES = JSON.parse(document.getElementById('theme-data').textContent);
+
+function isHex(v) { return typeof v === 'string' && /^#[0-9a-fA-F]{6}$/.test(v.trim()); }
+function rgb(h) { h = h.trim().slice(1); return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16)); }
+function lum(h) {
+  const c = rgb(h).map(v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); });
+  return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+}
+function ratio(a, b) {
+  if (!isHex(a) || !isHex(b)) return null;
+  const la = lum(a), lb = lum(b), hi = Math.max(la, lb), lo = Math.min(la, lb);
+  return (hi + 0.05) / (lo + 0.05);
+}
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+}
+function ov(th, k, dflt) {
+  const v = (th.colorOverrides || {})[k];
+  return isHex(v) ? v.trim() : dflt;
+}
+function layer(th, k, dflt) {
+  const p = (th.palette || {})[k];
+  if (typeof p === 'string') return isHex(p) ? p.trim() : dflt;
+  if (p && typeof p === 'object') return isHex(p.hex) ? p.hex.trim() : dflt;
+  return dflt;
+}
+
+function mock(canvas, card, ink, muted, mutedInk, primary, primaryInk, border) {
+  return `<div class="mock" style="background:${canvas};border:1px solid ${border}">
+    <div style="background:${card};border:1px solid ${border};border-radius:10px;padding:12px">
+      <h3 style="color:${ink}">Models</h3>
+      <p style="color:${mutedInk}">Secondary text on the card surface.</p>
+      <div class="row">
+        <button style="background:${primary};color:${primaryInk}">Run</button>
+        <span class="badge" style="background:${muted};color:${ink}">badge</span>
+        <span class="badge" style="background:${card};color:${mutedInk};border:1px solid ${border}">bordered</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+function swatches(th) {
+  const items = [];
+  for (const k of ['background', 'midground', 'foreground']) {
+    const v = layer(th, k, null);
+    if (v) items.push([k, v]);
+  }
+  for (const [k, v] of Object.entries(th.colorOverrides || {})) {
+    if (isHex(v)) items.push([k, v.trim()]);
+  }
+  return items.map(([k, v]) =>
+    `<div class="sw"><div class="box" style="background:${v}"></div>` +
+    `<div class="lbl">${esc(k.replace(/([a-z])([A-Z])/g, '$1\u200b$2'))}<br>${esc(v)}</div></div>`).join('');
+}
+
+function row(label, fg, bg, target) {
+  const r = ratio(fg, bg);
+  const txt = r === null ? '&mdash;' : r.toFixed(2) + ':1';
+  const cls = r === null ? '' : (r >= target ? 'pass' : 'fail');
+  return `<tr><td>${esc(label)}</td><td><code>${esc(fg || '')}</code></td>` +
+         `<td><code>${esc(bg || '')}</code></td>` +
+         `<td class="num ${cls}">${txt}</td><td class="num">${target}</td></tr>`;
+}
+
+function pairsOf(th) {
+  const canvas = layer(th, 'background', '#FFFFFF');
+  const card = ov(th, 'card', canvas);
+  const ink = ov(th, 'cardForeground', layer(th, 'midground', '#111827'));
+  const muted = ov(th, 'muted', canvas);
+  return [
+    ['body text on canvas', layer(th, 'midground', ink), canvas, 4.5],
+    ['text on card', ink, card, 4.5],
+    ['button label on primary', ov(th, 'primaryForeground', '#FFFFFF'), ov(th, 'primary', ink), 3.2],
+    ['muted text on muted', ov(th, 'mutedForeground', ink), muted, 4.5],
+    ['border on canvas', ov(th, 'border', canvas), canvas, 1.1],
+  ];
+}
+
+function wcagBadge(th) {
+  const measured = pairsOf(th)
+    .map(p => ({ r: ratio(p[1], p[2]), need: p[3] }))
+    .filter(x => x.r !== null);
+  if (!measured.length) return '';
+  const text = measured.filter(x => x.need >= 4.5);
+  const graphic = measured.filter(x => x.need < 4.5);
+  if (text.some(x => x.r < x.need) || graphic.some(x => x.r < x.need)) {
+    const below = measured.filter(x => x.r < x.need).length;
+    return `<span class="chip wcag-bad">${below} pair(s) below target</span>`;
+  }
+  const worstText = text.length ? Math.min(...text.map(x => x.r)) : null;
+  const level = worstText === null ? null : (worstText >= 7 ? 'AAA' : (worstText >= 4.5 ? 'AA' : 'AA-large'));
+  return (level ? `<span class="chip wcag-ok">text contrast ${level}</span>` : '')
+       + `<span class="chip wcag-ok">all pairs pass</span>`;
+}
+
+function contrastTable(th) {
+  return `<table><thead><tr><th>pair</th><th>foreground</th><th>surface</th>` +
+    `<th class="num">ratio</th><th class="num">target</th></tr></thead><tbody>` +
+    pairsOf(th).map(p => row(p[0], p[1], p[2], p[3])).join('') +
+    `</tbody></table>`;
+}
+
+function render() {
+  document.getElementById('themes').innerHTML = THEMES.map(th => {
+    const canvas = layer(th, 'background', '#FFFFFF');
+    const card = ov(th, 'card', canvas);
+    const ink = ov(th, 'cardForeground', layer(th, 'midground', '#111827'));
+    const muted = ov(th, 'muted', canvas);
+    const mutedInk = ov(th, 'mutedForeground', ink);
+    const primary = ov(th, 'primary', ink);
+    const primaryInk = ov(th, 'primaryForeground', '#FFFFFF');
+    const border = ov(th, 'border', canvas);
+    const mode = lum(canvas) > 0.5 ? 'light' : 'dark';
+    const kib = (th._cssBytes / 1024).toFixed(1);
+    return `<section class="card">
+      <h2>${esc(th.label || th.name)}</h2>
+      <div class="meta"><code>${esc(th.name)}</code> &middot; ${esc(th._file)}</div>
+      <p>${esc(th.description || '')}</p>
+      <div class="chips">
+        <span class="chip mode-${mode}">${mode}</span>
+        <span class="chip">canvas ${esc(canvas)}</span>
+        <span class="chip">customCSS ${kib} KiB</span>
+        ${th._cssSeries ? '<span class="chip">series via customCSS</span>' : ''}
+        ${wcagBadge(th)}
+      </div>
+      ${mock(canvas, card, ink, muted, mutedInk, primary, primaryInk, border)}
+      <div class="swatches">${swatches(th)}</div>
+      ${contrastTable(th)}
+      <pre>hermes config set dashboard.theme ${esc(th.name)}</pre>
+    </section>`;
+  }).join('');
+}
+
+render();
+
+</script>
+</body>
+</html>

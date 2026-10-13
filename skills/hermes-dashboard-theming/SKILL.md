@@ -169,6 +169,59 @@ not. Derive it deliberately:
   about 95 % light pixels for the light theme, about 93 % dark for the dark one. A single leftover
   surface from the other theme shows up in that number immediately.
 
+`scripts/make-dark-twin.py <light.yaml>` applies these rules mechanically (canvas from the ink hue,
+ink lifted to >= 7:1, surfaces stepped off the canvas, a dark `primary` inverted, a coloured one
+lifted, semantic tones lifted, `customCSS` carried over untouched) and prints the measured contrast
+table. Use its output as the starting point and then work through the list of hardcoded colours it
+reports — the tool deliberately does not rewrite CSS it cannot judge.
+
+## Tooling
+
+Four command-line tools ship with this repository. All of them are plain `python3`/`sh` — no pip
+install, no PyYAML, no network, no Hermes checkout required (the live checks are opt-in).
+
+- **`scripts/theme-check.py <file.yaml>`** — lint a theme before you trust it. It parses the file
+  with a built-in YAML-subset reader and reports what the dashboard would silently swallow: unknown
+  `colorOverrides` keys and unknown style buckets (the server drops both without a word),
+  `seriesColors` and the other fields that never reach the surface, properties inside a bucket that
+  nothing reads, `customCSS` over the 32 KiB cap, series variables set without `!important`, and the
+  contrast of every text/surface pair. Exit code 1 when it finds something, so it can gate a CI job.
+  With `--live --hermes <dir>` it re-reads the constants from an installed Hermes, runs that
+  version's own normaliser over the file and reports any drift against the mirror in
+  `scripts/theme_lib.py`.
+- **`scripts/make-dark-twin.py <light.yaml>`** — derive the dark counterpart from a light theme by
+  exactly the rules in *The dark counterpart* below, print the measured contrast table and list the
+  hardcoded colours in the carried-over `customCSS` that still need a human decision. The output is
+  a reviewable starting point, not a finished theme.
+- **`scripts/theme_lib.py`** — the shared YAML-subset reader, the colour maths and the schema
+  mirror. Import it instead of re-deriving `lum`/`ratio`/`mix`: the bisection in `fit`/`lighten_to`
+  is load-bearing, stepping a mix in whole percent gets stuck at the rounding.
+- **`tools/new-theme.py <name> --accent "#RRGGBB" [--mode dark]`** — writes a commented skeleton
+  that passes `theme-check --strict` immediately (colours derived against the contrast targets).
+- **`tools/preview.py <file.yaml> [--open]`** — renders a theme as a standalone offline HTML page
+  (sidebar, cards, buttons, chips, chart bars, contrast table): no Hermes, no server.
+- **`tools/contrast-report.py [--format markdown|json] <files>`** — the full contrast matrix, not
+  just the failures; exit 1 when a pair is below its target. Markdown is what a PR wants to show.
+- **`tools/gen-schema-doc.py`** — writes `docs/schema.md` from the schema mirror, so the reference
+  and the linter cannot drift apart.
+- **`tools/verify.sh`** — every check in one command (syntax, `theme-check --strict`, generated
+  files, tests); `tests/` holds the unittest suites. This is what CI runs.
+- **`install.sh`** (repository root, not part of the skill tap) — copy `themes/*.yaml` into
+  `$HERMES_HOME/dashboard-themes/`, optionally activate one, and never overwrite a file that
+  differs without `--force` (which keeps a timestamped `.bak`). `--status` shows the directory and
+  the active theme, `--dry-run` changes nothing.
+
+```bash
+python3 skills/hermes-dashboard-theming/scripts/theme-check.py themes/*.yaml
+python3 skills/hermes-dashboard-theming/scripts/theme-check.py --live --hermes /opt/hermes themes/light-clean.yaml
+python3 skills/hermes-dashboard-theming/scripts/make-dark-twin.py themes/light-clean.yaml
+python3 tools/new-theme.py aurora --accent "#7C5CFF"
+python3 tools/preview.py themes/aurora.yaml --open
+python3 tools/contrast-report.py --format markdown themes/aurora.yaml
+./tools/verify.sh
+./install.sh --status
+```
+
 ## Procedure
 
 1. Take stock: does `<HERMES_HOME>/dashboard-themes/` exist, and what is in `dashboard.theme`
@@ -186,12 +239,15 @@ not. Derive it deliberately:
    borders, hover, buttons) from a palette list, along with a check table. Enter the new palette at
    the top of `PALETTES` and run the script; role assignment and target values:
    `references/palette-to-theme-mapping.md`.
-4. First prove **without a browser** that the file arrives: import `_discover_user_themes()` from
-   `hermes_cli.web_server_dashboard` (Hermes venv, `HERMES_HOME` set) — it normalizes the YAML and
-   shows whether the keys arrive. Only then look at it: fully reload the page (on desktop
-   Ctrl+Shift+R, on mobile close and reopen the tab), click the palette icon in the header. The
-   backend rediscovers themes per request, the frontend only on load — without a full page load the
-   list stays old and "no difference" is seen.
+4. First prove **without a browser** that the file arrives. Fastest path:
+   `python3 scripts/theme-check.py <file>` — it parses the YAML with no dependencies, names every key
+   the server would drop and prints the contrast table; add `--live --hermes <install>` to run the
+   installed Hermes's own normaliser over the file. For the raw truth, import
+   `_discover_user_themes()` from `hermes_cli.web_server_dashboard` (Hermes venv, `HERMES_HOME` set)
+   — it normalizes the YAML and shows whether the keys arrive. Only then look at it: fully reload the
+   page (on desktop Ctrl+Shift+R, on mobile close and reopen the tab), click the palette icon in the
+   header. The backend rediscovers themes per request, the frontend only on load — without a full
+   page load the list stays old and "no difference" is seen.
 5. Second proof without a browser: `_render_active_theme_bootstrap_css()` (same module) shows the
    critical `<style>` block that the server renders for the active theme. If the expected
    `--background-base`/`--midground-base` is there, the chain file -> config -> first paint is
@@ -263,6 +319,7 @@ owner/repo
 │       ├── templates/
 │       └── scripts/
 ├── themes/<name>.yaml           # theme to copy (convention, not required)
+├── install.sh                   # one-command copy + activate
 └── README.md, LICENSE
 ```
 

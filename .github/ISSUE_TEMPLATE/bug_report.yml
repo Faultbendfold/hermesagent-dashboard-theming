@@ -1,0 +1,39 @@
+name: Bug report
+description: A theme, the skill or one of the tools behaves differently than documented
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks. A theme rarely fails loudly -- the server drops unknown keys without a word --
+        so the more of this you fill in, the faster this is to place.
+  - type: input
+    id: hermes-version
+    attributes:
+      label: Hermes version
+      description: The output of "hermes --version", or the version in the dashboard footer.
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happens, and what you expected instead
+    validations:
+      required: true
+  - type: textarea
+    id: theme
+    attributes:
+      label: The theme file, or the smallest excerpt that still shows it
+      render: yaml
+  - type: textarea
+    id: check
+    attributes:
+      label: Output of theme-check
+      description: python3 skills/hermes-dashboard-theming/scripts/theme-check.py --live --hermes INSTALL your-theme.yaml
+      render: console
+  - type: input
+    id: probe
+    attributes:
+      label: What you probed
+      description: The command or devtools snippet that showed the behaviour.
